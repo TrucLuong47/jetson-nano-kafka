@@ -100,11 +100,6 @@ def send(video):
     vid.release()
 
 if __name__ == "__main__":
-
-    # pass the CLI argument 
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("topic", type=str)
-    # args = parser.parse_args()
     
     # Load yolov5 model
     model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
