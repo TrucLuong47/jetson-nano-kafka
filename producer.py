@@ -26,6 +26,7 @@ def plot_boxes(results, frame):
     labels, cord = results
     n = len(labels)
     x_shape, y_shape = frame.shape[1], frame.shape[0]
+    vehicles_count = []
     for i in range(n):
         row = cord[i]
         # this condition is to take confidence above 0.3 and remove wrong labels which is more than 10
@@ -43,7 +44,13 @@ def plot_boxes(results, frame):
             cv2.putText(frame, "Car: " + str(torch.numel(labels[labels==2])) + " "
                                "Bus: " + str(torch.numel(labels[labels==5])) + " "
                                "Truck: " + str(torch.numel(labels[labels==7])), (20, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,255), 2)
-    return frame
+            
+            vehicles_count = [torch.numel(labels[labels==2]), torch.numel(labels[labels==5]), torch.numel(labels[labels==7])]
+
+    return {
+        "frame": frame,
+        "vehicles_count": vehicles_count
+    }
 ###############################################################
 # throw a callback for each time message is sent to kafka
 def delivery_callback(err, msg):
@@ -74,19 +81,19 @@ def send(video):
 
             # pass gray frame has been resized to Covert class
             results = score_frame(gray)
-            frame = plot_boxes(results, gray)
+            pb_results = plot_boxes(results, gray)
             end_time = time.perf_counter()
 
             # display fps and time using opencv
             dt = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
             fps = 1 / np.round(end_time - start_time, 3)
-            cv2.rectangle(frame, (16, 15), (287, 39), (0, 0, 0), -1)
-            cv2.putText(frame, f'FPS: {int(fps)}' + " "*2 + dt, (20, 32), cv2.FONT_HERSHEY_DUPLEX, 0.5, (255, 255, 255), 2)
+            cv2.rectangle(pb_results["frame"], (16, 15), (287, 39), (0, 0, 0), -1)
+            cv2.putText(pb_results["frame"], f'FPS: {int(fps)}' + " "*2 + dt, (20, 32), cv2.FONT_HERSHEY_DUPLEX, 0.5, (255, 255, 255), 2)
 
             # encode msg and send to kafka topic
             p.produce(
                 topic, 
-                encodeToResult(frame, str(id)),
+                encodeToResult(pb_results["frame"], str(id), pb_results["vehicles_count"]),
                 # callback=delivery_callback, 
                 partition=id
             )

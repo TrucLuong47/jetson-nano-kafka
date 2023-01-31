@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+message Result {
+    string cameraID = 1;
+    bytes frame = 2;
+    string timestamp = 3;
+    message Vehicles {
+        int32 car = 1;
+        int32 bus = 2;
+        int32 truck = 3;
+    }
+}

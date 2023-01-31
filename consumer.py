@@ -3,17 +3,17 @@ from serde import decodeFromResult
 from dotenv import load_dotenv
 import argparse
 import cv2
-import time
 import os
 
 def consume(consumer):
     while True:
-        msg = consumer.poll(timeout=1.0)
+        msg = consumer.poll(timeout=5.0)
         if msg is None:
             print(f"Waiting for message {args.partition} ...")
         elif msg.error():
             raise KafkaException(msg.error())
         else:
+            print(f"Receiving message {args.partition} ...")
             msg = decodeFromResult(msg.value())
             cv2.imshow(f"camera {args.partition}", msg["img"])
             if cv2.waitKey(1) & 0xFF == ord('q'):
