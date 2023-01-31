@@ -1,10 +1,9 @@
 from datetime import datetime
 from confluent_kafka import Producer
-from serde import encodeToRaw
+from serde import encodeToResult
 from dotenv import load_dotenv
 import concurrent.futures
 import torch
-import argparse
 import cv2
 import sys
 import os
@@ -87,7 +86,7 @@ def send(video):
             # encode msg and send to kafka topic
             p.produce(
                 topic, 
-                encodeToRaw(frame, str(id)),
+                encodeToResult(frame, str(id)),
                 # callback=delivery_callback, 
                 partition=id
             )

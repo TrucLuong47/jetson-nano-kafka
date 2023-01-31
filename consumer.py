@@ -1,5 +1,5 @@
 from confluent_kafka import Consumer, KafkaException, TopicPartition
-from serde import decodeFromRaw
+from serde import decodeFromResult
 from dotenv import load_dotenv
 import argparse
 import cv2
@@ -14,7 +14,7 @@ def consume(consumer):
         elif msg.error():
             raise KafkaException(msg.error())
         else:
-            msg = decodeFromRaw(msg.value())
+            msg = decodeFromResult(msg.value())
             cv2.imshow(f"camera {args.partition}", msg["img"])
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
