@@ -109,7 +109,6 @@ if __name__ == "__main__":
     
     # Load yolov5 model
     model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
-    # model = torch.hub.load('ultralytics/yolov5', 'custom', path='yolov5s.engine')
 
     # Load variables from .env file
     load_dotenv()

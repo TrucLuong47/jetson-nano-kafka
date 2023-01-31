@@ -16,6 +16,7 @@ def plot_boxes(results, frame):
     labels, cord = results
     n = len(labels)
     x_shape, y_shape = frame.shape[1], frame.shape[0]
+    vehicles_count = []
     for i in range(n):
         row = cord[i]
         # this condition is to take confidence above 0.3 and remove wrong labels which is more than 10
@@ -33,8 +34,13 @@ def plot_boxes(results, frame):
             cv2.putText(frame, "Car: " + str(torch.numel(labels[labels==2])) + " "
                                "Bus: " + str(torch.numel(labels[labels==5])) + " "
                                "Truck: " + str(torch.numel(labels[labels==7])), (20, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,255), 2)
-    return frame
-    
+            
+            vehicles_count = [torch.numel(labels[labels==2]), torch.numel(labels[labels==5]), torch.numel(labels[labels==7])]
+
+    return {
+        "frame": frame,
+        "vehicles_count": vehicles_count
+    }
 if __name__ == "__main__":
 
     model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
@@ -48,26 +54,22 @@ if __name__ == "__main__":
         ret, frm = vid.read()
         if not ret: 
             break
-        if count == 0:
-            gray = cv2.resize(frm, (416, 416))
-            results = score_frame(gray)
-            frame = plot_boxes(results, gray)
-            # --
-            end_time = time.perf_counter()
-            dt = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-            fps = 1 / np.round(end_time - start_time, 3)
-
-            cv2.rectangle(frame, (16, 15), (287, 39), (0, 0, 0), -1)
-            cv2.putText(frame, f'FPS: {int(fps)}' + " "*2 + dt, (20, 32), cv2.FONT_HERSHEY_DUPLEX, 0.5, (255, 255, 255), 2)
-
-            cv2.imshow("Public camera", frame)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-            count += 1
-        count += 1
-        if count == 30:
-            count = 0
+        gray = cv2.resize(frm, (416, 416))
+        results = score_frame(gray)
+        pb_results = plot_boxes(results, gray)
+        # --
+        end_time = time.perf_counter()
+        dt = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        fps = 1 / np.round(end_time - start_time, 3)
         
+        print(pb_results["vehicles_count"])
+
+        cv2.rectangle(pb_results["frame"], (16, 15), (287, 39), (0, 0, 0), -1)
+        cv2.putText(pb_results["frame"], f'FPS: {int(fps)}' + " "*2 + dt, (20, 32), cv2.FONT_HERSHEY_DUPLEX, 0.5, (255, 255, 255), 2)
+
+        cv2.imshow("Public camera", pb_results["frame"])
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break 
     vid.release()
     cv2.destroyAllWindows()
     print("\nExiting.")

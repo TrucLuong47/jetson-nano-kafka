@@ -13,8 +13,10 @@ def consume(consumer):
         elif msg.error():
             raise KafkaException(msg.error())
         else:
-            print(f"Receiving message {args.partition} ...")
+            # print(f"Receiving message {args.partition} ...")
             msg = decodeFromResult(msg.value())
+            list = [msg["car_num"], msg["bus_num"], msg["truck_num"]]    
+            print(f"vehicles number of frame {args.partition} : {list}")
             cv2.imshow(f"camera {args.partition}", msg["img"])
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
