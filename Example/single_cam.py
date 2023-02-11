@@ -46,8 +46,7 @@ if __name__ == "__main__":
     model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
     # model = torch.hub.load('ultralytics/yolov5', 'custom', path='yolov5s_2.engine')
 
-    vid = cv2.VideoCapture('Traffic3.m4v')
-    count = 0
+    vid = cv2.VideoCapture('Traffic2.m4v')
     while vid.isOpened():
         start_time = time.perf_counter()
         # --
@@ -62,7 +61,7 @@ if __name__ == "__main__":
         dt = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         fps = 1 / np.round(end_time - start_time, 3)
         
-        print(pb_results["vehicles_count"])
+        # print(pb_results["vehicles_count"])
 
         cv2.rectangle(pb_results["frame"], (16, 15), (287, 39), (0, 0, 0), -1)
         cv2.putText(pb_results["frame"], f'FPS: {int(fps)}' + " "*2 + dt, (20, 32), cv2.FONT_HERSHEY_DUPLEX, 0.5, (255, 255, 255), 2)

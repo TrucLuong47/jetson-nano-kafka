@@ -50,9 +50,8 @@ def plot_boxes(results, frame):
 
 if __name__ == "__main__":
 
-    # model = torch.hub.load('ultralytics/yolov5', 'custom', 'detect.pt')
-    # model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
-    model = torch.hub.load('ultralytics/yolov5', 'custom', path='yolov5s_2.engine')
+    model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+    # model = torch.hub.load('ultralytics/yolov5', 'custom', path='yolov5s_2.engine')
 
     vid1 = cv2.VideoCapture('Traffic1.m4v')
     vid2 = cv2.VideoCapture('Traffic2.m4v')

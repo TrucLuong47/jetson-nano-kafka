@@ -11,7 +11,7 @@ import numpy as np
 import time
 
 # List of video are used for object detection
-videos = [("Traffic2.m4v",0), ("Traffic2.m4v",1), ("Traffic2.m4v",2)]
+videos = [("Traffic1.m4v",0), ("Traffic2.m4v",1), ("Traffic3.m4v",2)]
 
 ########################### Convert model to np.array (frame has been detected)
 def score_frame(frame):
@@ -75,7 +75,7 @@ def send(video):
             cv2.destroyAllWindows()
             vid.release()
             break
-        if count == 1:
+        if count == 1 or count == 15:
             # Resize frame to 416x416
             gray = cv2.resize(frm, (416, 416))
 
@@ -94,13 +94,13 @@ def send(video):
             p.produce(
                 topic, 
                 encodeToResult(pb_results["frame"], str(id), pb_results["vehicles_count"]),
-                # callback=delivery_callback, 
+                callback=delivery_callback, 
                 partition=id
             )
             p.poll(1)
             count += 1
         count += 1
-        if count == 26:
+        if count == 30:
             count = 1
     print(f"exiting message {id}")
     vid.release()
