@@ -43,7 +43,7 @@ def plot_boxes(results, frame):
     }
 if __name__ == "__main__":
 
-    model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
+    model = torch.hub.load('ultralytics/yolov5', "yolov5m")
     # model = torch.hub.load('ultralytics/yolov5', 'custom', path='yolov5s_2.engine')
 
     vid = cv2.VideoCapture('Traffic2.m4v')
@@ -51,7 +51,7 @@ if __name__ == "__main__":
         start_time = time.perf_counter()
         # --
         ret, frm = vid.read()
-        if not ret: 
+        if not ret:
             break
         gray = cv2.resize(frm, (416, 416))
         results = score_frame(gray)
